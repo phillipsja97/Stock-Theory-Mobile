@@ -6,9 +6,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  title: {
-    fontSize: 36,
-    marginBottom: 16
+  text: {
+    color: 'white'
   },
   androidLink: {
     color: 'blue'
@@ -18,5 +17,28 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  logo: {
+    height: '100%',
+    width: 500,
+    marginBottom: 10,
+    backgroundColor: 'transparent'
+  },
+  splashTitleContainer: {
+    position: 'absolute',
+    justifyContent: 'center',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    color: 'white'
+  },
+  splashTitleText: {
+    color: 'white',
+    fontSize: 26,
+  },
+  splashButtons: {
+    margin: 10
   }
 });
