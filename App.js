@@ -4,6 +4,7 @@ import { NavigationContainer, useFocusEffect, useNavigation, useRoute } from '@r
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
 import { Provider, connect } from 'react-redux';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { createStore } from 'redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import EntyIcons from 'react-native-vector-icons/Entypo';
@@ -21,6 +22,15 @@ const MainAuthedStack = createStackNavigator();
 const UnAuthedStack = createStackNavigator();
 
 const AuthStore = createStore(AuthReducer);
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#D4AF37',
+    accent: '#f1c40f',
+  },
+};
 
 export default function App() {
   const [authed, setAuthed] = useState(false);
@@ -83,6 +93,7 @@ export default function App() {
 
   return (
       authed ?
+      <PaperProvider theme={theme}>
       <AuthContext.Provider value={authContext}>
         <Provider store={AuthStore}>
           <NavigationContainer>
@@ -101,6 +112,7 @@ export default function App() {
           </NavigationContainer>
         </Provider>
       </AuthContext.Provider>
+      </PaperProvider>
       :
       <React.Fragment>
         <AuthContext.Provider value={authContext}>
@@ -112,14 +124,10 @@ export default function App() {
                 }}
                 >
                     <UnAuthedStack.Screen
-                      name="SplashScreen"
-                      component={SplashScreen}
-                    />
-                    <UnAuthedStack.Screen
                       name="Auth"
                       component={Auth}
                       options={{
-                        headerShown: true,
+                        headerShown: false,
                         headerTitle: 'Sign In',
                         headerStyle: {
                           backgroundColor: 'black',
@@ -130,16 +138,23 @@ export default function App() {
                       }}
                     />
                     <UnAuthedStack.Screen
+                      name="SplashScreen"
+                      component={SplashScreen}
+                    />
+                    <UnAuthedStack.Screen
                       name="SignUp"
                       component={SignUp}
                       options={{
-                        headerShown: true,
+                        headerShown: false,
                         headerTitle: 'Sign Up',
                         headerStyle: {
                           backgroundColor: 'black',
                         },
                         headerTitleStyle: {
                           color: '#D4AF37'
+                        },
+                        headerBackTitleStyle: {
+                          color: '#D4AF37',
                         }
                       }}
                     />
