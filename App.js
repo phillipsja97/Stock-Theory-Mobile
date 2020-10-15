@@ -16,10 +16,16 @@ import SplashScreen from './src/Screens/UnAuthedScreens/SplashScreen';
 import AuthReducer from './src/Store/Reducers/AuthStore';
 import { AuthContext } from './src/Context/AuthContext';
 import SignUp from './src/Screens/UnAuthedScreens/SignUp';
+import StockDetails from './src/Screens/MainAuthedScreens/StockDetails';
+import SearchStockDetailsScreen from './src/Screens/MainAuthedScreens/SearchStockDetails';
+import SettingScreen from './src/Screens/MainAuthedScreens/Settings';
 
 const MaterialBottomTabs = createMaterialBottomTabNavigator();
 const MainAuthedStack = createStackNavigator();
 const UnAuthedStack = createStackNavigator();
+const MyStocksStack = createStackNavigator();
+const SearchStocksStack = createStackNavigator();
+const ProfileStack = createStackNavigator();
 
 const AuthStore = createStore(AuthReducer);
 
@@ -33,7 +39,7 @@ const theme = {
 };
 
 export default function App() {
-  const [authed, setAuthed] = useState(false);
+  const [authed, setAuthed] = useState(true);
   // console.log(authed, 'authedINAPP');
     const authContext = React.useMemo(() => {
       return {
@@ -48,15 +54,83 @@ export default function App() {
 
   console.log(AuthStore.getState().authed, 'authedFromStore');
 
-  createBottomTabs = () => {
-    return <MaterialBottomTabs.Navigator
+function MyStocksScreens() {
+  return (
+    <MyStocksStack.Navigator>
+      <MyStocksStack.Screen
+          name="MyStocks"
+          component={MyStocks}
+          options={{
+            headerShown: false,
+          }}
+      />
+      <MyStocksStack.Screen
+          name="StockDetails"
+          component={StockDetails}
+          options={{
+            headerShown: false,
+          }}
+      />
+    </MyStocksStack.Navigator>
+  );
+}
+
+function SearchStocksScreens() {
+  return (
+    <SearchStocksStack.Navigator>
+      <SearchStocksStack.Screen
+        name="SearchStocks"
+        component={SearchStocks}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <SearchStocksStack.Screen
+        name="SearchStocksDetails"
+        component={SearchStockDetailsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </SearchStocksStack.Navigator>
+  )
+}
+
+function ProfileScreens() {
+  return (
+    <ProfileStack.Navigator>
+      <ProfileStack.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <ProfileStack.Screen
+        name="Settings"
+        component={SettingScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </ProfileStack.Navigator>
+  )
+}
+
+  return (
+      authed ?
+      <PaperProvider theme={theme}>
+      <AuthContext.Provider value={authContext}>
+        <Provider store={AuthStore}>
+          <NavigationContainer>
+            <MaterialBottomTabs.Navigator
               activeColor="#D4AF37"
               inactiveColor="#A8A8A8"
               barStyle={{ backgroundColor: '#000000' }}
               >
               <MaterialBottomTabs.Screen
               name="Stocks"
-              component={MyStocks}
+              component={MyStocksScreens}
               options={{
                 tabBarLabel: 'My Stocks',
                 tabBarIcon: ({ color }) => (
@@ -66,7 +140,7 @@ export default function App() {
               />
               <MaterialBottomTabs.Screen
               name="Search"
-              component={SearchStocks}
+              component={SearchStocksScreens}
               options={{
                 tabBarLabel: 'Search Stocks',
                 tabBarIcon: ({ color }) => (
@@ -76,7 +150,7 @@ export default function App() {
               />
               <MaterialBottomTabs.Screen
               name="Profile"
-              component={Profile}
+              component={ProfileScreens}
               options={{
                 tabBarLabel: 'Profile',
                 tabBarIcon: ({ color }) => (
@@ -84,31 +158,7 @@ export default function App() {
                 ),
               }}
               />
-    </MaterialBottomTabs.Navigator>
-  }
-
-  // const setAuthedInAuth = () => {
-  //   setAuthed(true);
-  // }
-
-  return (
-      authed ?
-      <PaperProvider theme={theme}>
-      <AuthContext.Provider value={authContext}>
-        <Provider store={AuthStore}>
-          <NavigationContainer>
-              <MainAuthedStack.Navigator
-                screenOptions={{
-                      headerStyle: { backgroundColor: '#000000'},
-                      headerTintColor: '#D4AF37',
-                }}>
-                    <MainAuthedStack.Screen name="ProfileStack"
-                    children={createBottomTabs}
-                    options={{
-                      title: "Stock Theory",
-                    }}
-                    />
-              </MainAuthedStack.Navigator>
+            </MaterialBottomTabs.Navigator>
           </NavigationContainer>
         </Provider>
       </AuthContext.Provider>
@@ -119,9 +169,9 @@ export default function App() {
           <Provider store={AuthStore}>
             <NavigationContainer>
                 <UnAuthedStack.Navigator
-                screenOptions={{
-                  headerShown: false,
-                }}
+                  screenOptions={{
+                    headerShown: false,
+                  }}
                 >
                     <UnAuthedStack.Screen
                       name="Auth"

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Switch, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Divider, Appbar } from 'react-native-paper';
+import { Appbar } from 'react-native-paper';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview'
 import MaterialCommunityArrow from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TextInput, useTheme } from 'react-native-paper';
