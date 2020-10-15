@@ -18,12 +18,14 @@ import { AuthContext } from './src/Context/AuthContext';
 import SignUp from './src/Screens/UnAuthedScreens/SignUp';
 import StockDetails from './src/Screens/MainAuthedScreens/StockDetails';
 import SearchStockDetailsScreen from './src/Screens/MainAuthedScreens/SearchStockDetails';
+import SettingScreen from './src/Screens/MainAuthedScreens/Settings';
 
 const MaterialBottomTabs = createMaterialBottomTabNavigator();
 const MainAuthedStack = createStackNavigator();
 const UnAuthedStack = createStackNavigator();
 const MyStocksStack = createStackNavigator();
 const SearchStocksStack = createStackNavigator();
+const ProfileStack = createStackNavigator();
 
 const AuthStore = createStore(AuthReducer);
 
@@ -94,6 +96,27 @@ function SearchStocksScreens() {
   )
 }
 
+function ProfileScreens() {
+  return (
+    <ProfileStack.Navigator>
+      <ProfileStack.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <ProfileStack.Screen
+        name="Settings"
+        component={SettingScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </ProfileStack.Navigator>
+  )
+}
+
   return (
       authed ?
       <PaperProvider theme={theme}>
@@ -127,7 +150,7 @@ function SearchStocksScreens() {
               />
               <MaterialBottomTabs.Screen
               name="Profile"
-              component={Profile}
+              component={ProfileScreens}
               options={{
                 tabBarLabel: 'Profile',
                 tabBarIcon: ({ color }) => (

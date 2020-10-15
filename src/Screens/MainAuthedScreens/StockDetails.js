@@ -11,8 +11,8 @@ function StockDetailsScreen () {
        <Appbar.BackAction onPress={() =>  navigation.goBack()} style={styles.appbar} color='#D4AF37'/>
        <Appbar.Content title="Stock Details" style={styles.appbar} color='#D4AF37'color='#D4AF37'/>
       </Appbar.Header>
-      <View>
-        <Text style={styles.container}>
+      <View  style={styles.container}>
+        <Text>
           Stock Details
         </Text>
       </View>
