@@ -82,8 +82,6 @@ async (req, res) => {
           }
 
           user = new User({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
             username: req.body.username,
             email: req.body.email,
             password: req.body.password
@@ -128,7 +126,7 @@ router.post(
   "/login",
   [
     check("email", "Please enter a valid email").isEmail(),
-    check("password", "Please enter a valid password").isLength({ min: 6 })
+    check("password", "Please enter a valid password").isLength({ min: 5 })
   ],
   async (req, res) => {
     const errors = validationResult(req);

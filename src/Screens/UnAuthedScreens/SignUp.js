@@ -4,13 +4,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Appbar } from 'react-native-paper';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview'
 import MaterialCommunityArrow from 'react-native-vector-icons/MaterialCommunityIcons';
-import { TextInput, useTheme } from 'react-native-paper';
+import { TextInput, useTheme, Button } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../../Context/AuthContext';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Authenticate } from '../../Store/Actions/AuthActions';
+import { Authenticate, SetToken, SetUser } from '../../Store/Actions/AuthActions';
+import authData from '../../Data/UserData';
 // import { styles } from '../../Styles/Styles';
 
 function SignUp (props) {
@@ -23,13 +24,44 @@ function SignUp (props) {
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-  const loginUser = () => {
-    if (emailText === 'test@gmail.com' && passwordText === 'password' && isEnabled) {
-      props.Authenticate(true);
-      signIn();
-    } else {
-      alert('That username or password is incorrect');
-    }
+  // const loginUser = () => {
+  //   if (emailText === 'test@gmail.com' && passwordText === 'password' && isEnabled) {
+  //     props.Authenticate(true);
+  //     signIn();
+  //   } else {
+  //     alert('That username or password is incorrect');
+  //   }
+  // }
+
+  const signUpAndLogin = () => {
+    let token = '';
+      const user = {
+        username: text,
+        email: emailText,
+        password: passwordText
+      };
+      if (isEnabled) {
+        authData.signUp(user)
+          .then((result) => {
+            props.SetToken(result.data.token);
+            token = result.data.token;
+              if (token !== '') {
+                authData.getUser(token)
+                  .then((response) => {
+                      const user = {
+                        email: response.data.email,
+                        username: response.data.username
+                      };
+                      props.SetUser(user);
+                      props.Authenticate(true);
+                      signIn();
+                  })
+              }
+          })
+        .catch((error) => {
+          console.log(error.response)
+        });
+      }
   }
 
   return (
@@ -80,7 +112,7 @@ function SignUp (props) {
                         theme={{ colors: { primary: '#D4AF37',underlineColor:'transparent',}}}
                         label="Password"
                         value={passwordText}
-                        secureTextEntry='true'
+                        secureTextEntry={true}
                         onChangeText={passwordText => setPasswordText(passwordText)}
                       />
                     </View>
@@ -110,14 +142,13 @@ function SignUp (props) {
                     }
                     <View style={styles.buttonContainer}>
                     <View style={styles.button}>
-                      <TouchableOpacity onPress={() => loginUser()}>
-                          <LinearGradient
-                              colors={['#FFD700', '#d6b500']}
-                              style={styles.signIn}
-                          >
-                              <Text style={styles.textSign}>Create my Account</Text>
-                          </LinearGradient>
-                      </TouchableOpacity>
+                      <Button mode="contained"
+                      onPress={signUpAndLogin}
+                      color='#D4AF37'
+                      style={styles.insideButton}
+                      >
+                        Create My Account
+                      </Button>
                     </View>
                   </View>
                   </View>
@@ -129,14 +160,15 @@ function SignUp (props) {
 }
 
 const mapStateToProps = (state) => {
-  const { authed } = state
-  console.log(authed, 'authedInAuthComponent');
-  return { authed }
+  const { authed, token, user } = state
+  return { authed, token, user }
 };
 
 const mapDispatchToProps = dispatch => (
   bindActionCreators({
     Authenticate,
+    SetToken,
+    SetUser
   }, dispatch)
 );
 
@@ -183,7 +215,8 @@ const styles = StyleSheet.create({
   },
   button: {
       alignItems: 'flex-end',
-      marginTop: 30
+      marginTop: 30,
+      color: 'yellow'
   },
   signIn: {
       width: 200,
@@ -204,15 +237,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     marginTop: 20,
     marginBottom: 80,
-//     width: '90%',
-//     marginTop: 40,
-//     marginBottom: 40,
-//     alignItems: 'center',
-//     backgroundColor: 'white',
-//     borderTopLeftRadius: 30,
-//     borderTopRightRadius: 30,
-//     borderBottomRightRadius: 30,
-//     borderBottomLeftRadius: 30
   },
   loginTitle: {
       color: '#05375a',
@@ -268,5 +292,8 @@ const styles = StyleSheet.create({
   appbar: {
     backgroundColor: 'black',
     color: '#D4AF37'
+  },
+  insideButton: {
+    padding: 8
   }
 });

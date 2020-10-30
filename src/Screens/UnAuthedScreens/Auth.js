@@ -4,14 +4,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Divider } from 'react-native-paper';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview'
 import MaterialCommunityArrow from 'react-native-vector-icons/MaterialCommunityIcons';
-import { TextInput, useTheme } from 'react-native-paper';
+import { TextInput, useTheme, Button } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../../Context/AuthContext';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Authenticate } from '../../Store/Actions/AuthActions';
-// import { styles } from '../../Styles/Styles';
+import { Authenticate, SetToken, SetUser } from '../../Store/Actions/AuthActions';
+import authData from '../../Data/UserData';
 
 function AuthScreen (props) {
   const { signIn } = useContext(AuthContext);
@@ -20,12 +20,30 @@ function AuthScreen (props) {
   const [passwordText, setPasswordText] = useState('');
 
   const loginUser = () => {
-    if (text === 'test@gmail.com' && passwordText === 'password') {
-      props.Authenticate(true);
-      signIn();
-    } else {
-      alert('That username or password is incorrect');
-    }
+    let token = '';
+    const user = {
+      email: text,
+      password: passwordText
+    };
+    authData.loginUser(user)
+      .then((result) => {
+        props.SetToken(result.data.token);
+        token = result.data.token;
+        SetToken(result.data.token);
+        if (token !== '') {
+          authData.getUser(token)
+            .then((response) => {
+              const user = {
+                email: response.data.email,
+                username: response.data.username
+              };
+              props.SetUser(user);
+              props.Authenticate(true);
+              signIn();
+            })
+       }
+      })
+      .catch((error) => console.error(error));
   }
 
   return (
@@ -66,20 +84,19 @@ function AuthScreen (props) {
                         theme={{ colors: { primary: '#D4AF37',underlineColor:'transparent',}}}
                         label="Password"
                         value={passwordText}
-                        secureTextEntry='true'
+                        secureTextEntry={true}
                         onChangeText={passwordText => setPasswordText(passwordText)}
                       />
                     </View>
                     <View style={styles.buttonContainer}>
                     <View style={styles.button}>
-                      <TouchableOpacity onPress={() => loginUser()}>
-                          <LinearGradient
-                              colors={['#FFD700', '#d6b500']}
-                              style={styles.signIn}
-                          >
-                              <Text style={styles.textSign}>Login to my Account</Text>
-                          </LinearGradient>
-                      </TouchableOpacity>
+                    <Button mode="contained"
+                      onPress={loginUser}
+                      color='#D4AF37'
+                      style={styles.insideButton}
+                      >
+                        Create My Account
+                      </Button>
                     </View>
                     <View style={styles.button}>
                       <TouchableOpacity onPress={()=>navigation.navigate('SignUp')}>
@@ -100,14 +117,15 @@ function AuthScreen (props) {
 }
 
 const mapStateToProps = (state) => {
-  const { authed } = state
-  console.log(authed, 'authedInAuthComponent');
-  return { authed }
+  const { authed, token, user } = state
+  return { authed, token, user }
 };
 
 const mapDispatchToProps = dispatch => (
   bindActionCreators({
     Authenticate,
+    SetToken,
+    SetUser
   }, dispatch)
 );
 
@@ -209,4 +227,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center'
   },
+  insideButton: {
+    padding: 8
+  }
 });

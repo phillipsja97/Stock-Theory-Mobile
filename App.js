@@ -4,6 +4,8 @@ import { NavigationContainer, useFocusEffect, useNavigation, useRoute } from '@r
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
 import { Provider, connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Authenticate, SetToken } from './src/Store/Actions/AuthActions';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { createStore } from 'redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -38,8 +40,9 @@ const theme = {
   },
 };
 
-export default function App() {
-  const [authed, setAuthed] = useState(true);
+function App(props) {
+  const [authed, setAuthed] = useState(false);
+  // const navigation = useNavigation();
   // console.log(authed, 'authedINAPP');
     const authContext = React.useMemo(() => {
       return {
@@ -52,7 +55,14 @@ export default function App() {
       };
     }, []);
 
-  console.log(AuthStore.getState().authed, 'authedFromStore');
+    // useEffect(() => {
+    //   navigation.addListener('login', () => {
+    //     props.Authenticate(true);
+    //   });
+    //   navigation.addListener('logout', () => {
+    //     props.Authenticate(false);
+    //   })
+    // });
 
 function MyStocksScreens() {
   return (
@@ -120,48 +130,48 @@ function ProfileScreens() {
   return (
       authed ?
       <PaperProvider theme={theme}>
-      <AuthContext.Provider value={authContext}>
-        <Provider store={AuthStore}>
-          <NavigationContainer>
-            <MaterialBottomTabs.Navigator
-              activeColor="#D4AF37"
-              inactiveColor="#A8A8A8"
-              barStyle={{ backgroundColor: '#000000' }}
-              >
-              <MaterialBottomTabs.Screen
-              name="Stocks"
-              component={MyStocksScreens}
-              options={{
-                tabBarLabel: 'My Stocks',
-                tabBarIcon: ({ color }) => (
-                  <EntyIcons name="area-graph" color={color} size={26} />
-                ),
-              }}
-              />
-              <MaterialBottomTabs.Screen
-              name="Search"
-              component={SearchStocksScreens}
-              options={{
-                tabBarLabel: 'Search Stocks',
-                tabBarIcon: ({ color }) => (
-                  <Ionicons name="ios-search" color={color} size={26} />
-                ),
-              }}
-              />
-              <MaterialBottomTabs.Screen
-              name="Profile"
-              component={ProfileScreens}
-              options={{
-                tabBarLabel: 'Profile',
-                tabBarIcon: ({ color }) => (
-                  <Ionicons name="ios-person" color={color} size={26} />
-                ),
-              }}
-              />
-            </MaterialBottomTabs.Navigator>
-          </NavigationContainer>
-        </Provider>
-      </AuthContext.Provider>
+        <AuthContext.Provider value={authContext}>
+          <Provider store={AuthStore}>
+            <NavigationContainer>
+              <MaterialBottomTabs.Navigator
+                activeColor="#D4AF37"
+                inactiveColor="#A8A8A8"
+                barStyle={{ backgroundColor: '#000000' }}
+                >
+                <MaterialBottomTabs.Screen
+                name="Stocks"
+                component={MyStocksScreens}
+                options={{
+                  tabBarLabel: 'My Stocks',
+                  tabBarIcon: ({ color }) => (
+                    <EntyIcons name="area-graph" color={color} size={26} />
+                  ),
+                }}
+                />
+                <MaterialBottomTabs.Screen
+                name="Search"
+                component={SearchStocksScreens}
+                options={{
+                  tabBarLabel: 'Search Stocks',
+                  tabBarIcon: ({ color }) => (
+                    <Ionicons name="ios-search" color={color} size={26} />
+                  ),
+                }}
+                />
+                <MaterialBottomTabs.Screen
+                name="Profile"
+                component={ProfileScreens}
+                options={{
+                  tabBarLabel: 'Profile',
+                  tabBarIcon: ({ color }) => (
+                    <Ionicons name="ios-person" color={color} size={26} />
+                  ),
+                }}
+                />
+              </MaterialBottomTabs.Navigator>
+            </NavigationContainer>
+          </Provider>
+        </AuthContext.Provider>
       </PaperProvider>
       :
       <React.Fragment>
@@ -215,3 +225,5 @@ function ProfileScreens() {
       </React.Fragment>
   );
 }
+
+export default App;

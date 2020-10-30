@@ -3,13 +3,15 @@ import { Text, View, Button, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Appbar } from 'react-native-paper';
-import { Authenticate } from '../../Store/Actions/AuthActions';
+import { Authenticate, SetUser, SetToken } from '../../Store/Actions/AuthActions';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../../Context/AuthContext';
 
 function Profile (props) {
   const { signOut } = React.useContext(AuthContext);
   const navigation = useNavigation();
+  console.log(props.authed, 'authedInProfile');
+  console.log(props.user, 'userInProfile');
 
   const logOutUser = () => {
     props.Authenticate(false);
@@ -31,6 +33,7 @@ function Profile (props) {
                     title='Log Out'
                     onPress={() => logOutUser()}
                   />
+                  <Text>{props.user.username}</Text>
                 </React.Fragment>,
                 android:
                   <TouchableOpacity
@@ -45,14 +48,15 @@ function Profile (props) {
 }
 
 const mapStateToProps = (state) => {
-  const { authed } = state
-  console.log(authed, 'authedInAuthComponent');
-  return { authed }
+  const { authed, token, user } = state
+  return { authed, token, user }
 };
 
 const mapDispatchToProps = dispatch => (
   bindActionCreators({
     Authenticate,
+    SetUser,
+    SetToken
   }, dispatch)
 );
 
